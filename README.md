@@ -1,18 +1,24 @@
-# YouTube Channel Analytics — Predicting Subscribers
+YouTube Channel Analytics — Predicting Subscribers
 
-**Goal.** Use public channel-level metrics (views, uploads, channel age, ratios) to predict subscriber counts and understand key drivers.
+Goal. Predict YouTube channel subscribers from public channel-level metrics (views, uploads, channel age) and simple title/video style signals.
 
-## Dataset
-- Columns: `artist_name`, `channel_ID`, `channel_title`, `published`, `views`, `subs`, `videos`
-- Repo ships a small sample: `data/sample_youtube_channels.csv`
-- Full dataset: add locally as `YouTube_Combined_Cleaned (1).csv` (not committed)
+Dataset
 
-## Methods
-1. **EDA:** distributions, top channels, log-log relationships, correlations  
-2. **Features:** `channel_age_years`, `views_per_video`, `subs_per_video`, `views_per_sub`, `growth_rate=subs/channel_age_years`  
-3. **Models:** Linear, Ridge, Lasso, Random Forest with cross-validation / OOB  
-4. **Evaluation:** R² and RMSE on held-out test set (log-scale target)
+Columns: artist_name, channel_ID, channel_title, published, views, subs, videos
 
+Repo ships a small sample: data/sample_youtube_channels.csv
+
+Full dataset: add locally as YouTube_Combined_Cleaned (1).csv (not committed)
+
+Methods
+
+EDA: distributions, top channels, log–log relationships, correlations
+
+Features (no leakage): channel_age_years, views_per_video, plus optional text/video aggregates (title length, !, ?, emojis, keywords, sentiment, language share, median video stats)
+
+Models: Ridge / Lasso, Random Forest, HistGradientBoosting (with CV or RF OOB)
+
+Evaluation: R² on log-scale target and RMSLE; also sMAPE/WAPE on raw scale; segment analysis by channel size
 ## Quickstart
 ```bash
 # 1) install
