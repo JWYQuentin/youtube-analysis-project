@@ -40,7 +40,7 @@ streamlit run app.py
 
 - Predicted vs Actual (log): results/figures/pred_vs_actual_log.png
 
-##Segmented Performance
+## Segmented Performance
 
 Table: results/tables/segment_performance.csv
 
