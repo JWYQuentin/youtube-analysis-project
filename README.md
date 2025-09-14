@@ -29,3 +29,43 @@ notebooks/04_text_features.ipynb
 
 # 4) (optional) demo app
 streamlit run app.py
+```
+## Results
+
+- Best model: <FILL MODEL NAME>
+
+- R² (log): <FILL NUMBER>
+
+- RMSLE: <FILL NUMBER>
+
+- Predicted vs Actual (log): results/figures/pred_vs_actual_log.png
+
+##Segmented Performance
+
+Table: results/tables/segment_performance.csv
+
+Figure: results/figures/smape_by_segment.png
+
+(Optional per-segment models) Table: results/tables/seg_model_performance.csv
+
+## Respitory structure
+data/
+  sample_youtube_channels.csv
+notebooks/
+  01_eda.ipynb
+  02_modeling_baseline.ipynb
+  03_model_comparison.ipynb
+  04_text_features.ipynb
+results/
+  figures/
+    pred_vs_actual_log.png
+    smape_by_segment.png
+  tables/
+    metrics_final.csv
+    segment_performance.csv
+  artifacts/
+    best_youtube_subs_model.joblib
+app.py
+requirements.txt
+
+
