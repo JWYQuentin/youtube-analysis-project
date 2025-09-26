@@ -69,3 +69,30 @@ app.py
 requirements.txt
 
 
+
+
+## Refined Model Pipeline
+
+Train the latest gradient boosting model and store its artifacts:
+
+```bash
+python main.py \
+  --train-data youtube_channels_with_features.csv \
+  --model-out models/refined_subscriber_model.joblib \
+  --metrics-out results/metrics.json
+```
+
+The script prints evaluation metrics to the console and writes them to
+`results/metrics.json`. The serialized model powers the Streamlit app described
+below.
+
+## Interactive Web App
+
+Once the model artifact exists, launch the Streamlit experience:
+
+```bash
+streamlit run app.py
+```
+
+Use the sidebar to enter a channel's metrics (views, uploads, age). You can also
+upload a CSV with the required feature columns to generate batch predictions.
