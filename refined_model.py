@@ -159,6 +159,25 @@ def main() -> None:
     preds = model.predict(X_test)
     preds = np.maximum(preds, 0)
 
+from pathlib import Path
+from joblib import dump
+import json
+
+Path("models").mkdir(exist_ok=True)
+Path("results").mkdir(exist_ok=True)
+
+dump(model, "models/refined_subscriber_model.joblib")
+print("Saved model to models/refined_subscriber_model.joblib")
+
+metrics = {
+    "holdout_r2": float(r2_score(y_test, preds)),
+    "holdout_rmsle": float(np.sqrt(mean_squared_log_error(y_test.clip(min=0)+1,
+                                                           preds.clip(min=0)+1)))
+}
+(Path("results") / "metrics.json").write_text(json.dumps(metrics, indent=2))
+print("Saved metrics to results/metrics.json")
+
+
     holdout_r2 = r2_score(y_test, preds)
     holdout_rmsle = math.sqrt(mean_squared_log_error(y_test, preds))
 
