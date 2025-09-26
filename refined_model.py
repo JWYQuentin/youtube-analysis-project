@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 import joblib
+import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
@@ -169,7 +170,7 @@ def train_and_evaluate(df: pd.DataFrame) -> Tuple[Pipeline, dict]:
         metrics = {
             "r2": float(r2_score(y_test, predictions)),
             "mae": float(mean_absolute_error(y_test, predictions)),
-            "rmse": float(mean_squared_error(y_test, predictions, squared=False)),
+            "rmse": float(np.sqrt(mean_squared_error(y_test, predictions))),
             "train_rows": int(len(X_train)),
             "test_rows": int(len(X_test)),
         }
