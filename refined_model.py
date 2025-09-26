@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Iterable, Tuple
 
 import joblib
 import numpy as np
@@ -24,57 +24,30 @@ TARGET_COLUMN = "subs"
 RANDOM_STATE = 42
 
 
-def _read_lines(path: Path) -> List[str]:
-    text = path.read_text(encoding="utf-8", errors="ignore")
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    return lines
-
-
-def _merge_fragmented_rows(lines: List[str]) -> Tuple[List[str], List[str]]:
-    if not lines:
-        raise ValueError("The provided dataset is empty.")
-
-    header = lines[0]
-    expected_columns = header.count(",") + 1
-    rows: List[str] = []
-    current_parts: List[str] = []
-
-    for raw_line in lines[1:]:
-        if not raw_line:
-            continue
-
-        current_parts.extend(raw_line.split(","))
-
-        while len(current_parts) >= expected_columns:
-            row = current_parts[:expected_columns]
-            rows.append(",".join(row))
-            current_parts = current_parts[expected_columns:]
-
-    if current_parts:
-        padded = current_parts + [""] * (expected_columns - len(current_parts))
-        rows.append(",".join(padded[:expected_columns]))
-
-    return header.split(","), rows
-
-
 def load_channels_dataframe(path: Path) -> pd.DataFrame:
-    lines = _read_lines(path)
-    columns, rows = _merge_fragmented_rows(lines)
-    data: List[List[str]] = [row.split(",") for row in rows if row.strip()]
-    df = pd.DataFrame(data, columns=columns)
+    df = pd.read_csv(path, encoding="utf-8", on_bad_lines="skip")
+    df = df.dropna(how="all")
 
-    for col in df.columns:
-        if df[col].dtype == object:
-            df[col] = df[col].str.replace("\"", "", regex=False).str.strip()
-            numeric_series = pd.to_numeric(df[col], errors="coerce")
-            if numeric_series.notna().sum() > 0:
-                df[col] = numeric_series
+    for column in df.columns:
+        if df[column].dtype == object:
+            series = df[column].astype("string")
+            cleaned = series.str.replace("\"", "", regex=False).str.strip()
+            numeric_series = pd.to_numeric(cleaned, errors="coerce")
+            numeric_ratio = (
+                float(numeric_series.notna().sum()) / len(df)
+                if len(df)
+                else 0.0
+            )
+            if numeric_ratio >= 0.5:
+                df[column] = numeric_series
+            else:
+                df[column] = cleaned
 
     if "published" in df.columns:
-        df["published"] = pd.to_datetime(df["published"], errors="coerce")
-        df["published_year"] = df["published"].dt.year
-        df["published_month"] = df["published"].dt.month
-        df["published_day"] = df["published"].dt.day
+        published = pd.to_datetime(df["published"], errors="coerce")
+        df["published_year"] = published.dt.year
+        df["published_month"] = published.dt.month
+        df["published_day"] = published.dt.day
         df = df.drop(columns=["published"])
 
     df = df.drop_duplicates().reset_index(drop=True)
