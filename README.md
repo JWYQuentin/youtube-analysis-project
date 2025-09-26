@@ -10,8 +10,9 @@
 ## Methods
 1. **EDA:** distributions, top channels, log–log relationships, correlations  
 2. **Features (no leakage):** `channel_age_years`, `views_per_video`, plus optional title/video aggregates (length, `!`, `?`, emojis, keywords, sentiment, language share, median video stats)  
-3. **Models:** Ridge/Lasso, Random Forest, HistGradientBoosting (CV or RF OOB)  
-4. **Evaluation:** R² on log target (`log1p(subs)`) and **RMSLE**; also sMAPE/WAPE on raw scale; segment analysis by channel size
+3. **Models:** Ridge/Lasso, Random Forest, HistGradientBoosting (CV or RF OOB)
+4. **Refined model script (`refined_model.py`):** gradient-boosted trees wrapped in a preprocessing pipeline with log-scaled numeric features and leakage-safe engineered metrics (`views_per_video`, `uploads_per_year`, `log_views_growth`). The script performs 5-fold cross-validation and a hold-out evaluation while exporting predictions for inspection.
+5. **Evaluation:** R² on log target (`log1p(subs)`) and **RMSLE**; also sMAPE/WAPE on raw scale; segment analysis by channel size
 
 ## Quickstart
 ```bash
@@ -26,6 +27,9 @@ notebooks/01_eda.ipynb
 notebooks/02_modeling_baseline.ipynb
 notebooks/03_model_comparison.ipynb
 notebooks/04_text_features.ipynb
+
+# (or run the standalone refined model)
+python refined_model.py
 
 # 4) (optional) demo app
 streamlit run app.py
